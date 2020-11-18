@@ -121,19 +121,16 @@ class User:
 			changeLabel("",True)
 		return self.done
 		
-	def sendMail(self, to, subject, message):
+	def sendMail(self, to, subject, message, attachment = ""):
 		msg 			= MIMEMultipart()
 		msg.attach(MIMEText(message,"html"))
 		msg["From"]		= self.email
 		msg["To"] 		= to
-		msg["Subject"] 	= subject
+		msg["Subject"] 		= subject
 
-		fil 			= MIMEApplication(
-										open(r"example.txt","rb").read(), 
-										name="styles.css"
-										)
-
-		msg.attach(fil)
+		if len(attachment):
+			attachment	= MIMEApplication(open(r"%s"%attachment,"rb").read(), name=attachment.rsplit("/")[0])
+		msg.attach(attachment)
 		try:
 			self.server.sendmail(self.email, to, msg.as_string())
 			changeLabel("Message Sent Successfully")
